@@ -1,0 +1,104 @@
+create table [user]
+(
+username varchar(20) primary key,
+passwd varchar(20) not null,
+sex char(2) check(sex in ('男','女')),
+birthday varchar(10),
+telephone varchar(20),
+address varchar(20),
+email varchar(20),
+score int not null check(score >= 0 and score <= 300),
+mem_level int not null check(mem_level >= 0 and mem_level <= 3)
+school_name varchar(20) not null,
+major_name varchar(20) not null,
+foreign key (school_name,major_name) references major(school_name,major_name)
+)
+
+create table major
+(
+school_name varchar(20),
+major_name varchar(20),
+primary key (school_name, major_name)
+)
+
+create table post
+(
+post_id int identity(1,1) primary key,
+title varchar(500) not null,
+content varchar(8000) not null,
+post_date varchar(30) not null,
+star_count int not null check(star_count >= 0),
+school_name varchar(20) not null,
+major_name varchar(20) not null,
+username varchar(20) not null,
+foreign key (school_name,major_name) references major(school_name,major_name),
+foreign key (username) references [user](username)
+)
+
+create table [message]
+(
+message_id int identity(1,1) primary key,
+content varchar(1000) not null,
+release_date varchar(30) not null,
+username varchar(20) not null,
+foreign key (username) references [user](username)
+)
+
+create table [order]
+(
+order_id int identity(1,1) primary key,
+order_date varchar(30) not null,
+order_money money not null,
+payway int not null,
+[status] int not null,
+username varchar(20) not null,
+foreign key (username) references [user](username)
+)
+
+create table book
+(
+ISBN int identity(1,1) primary key,
+title varchar(100) not null,
+price money not null,
+sale_count int not null check(sale_count >= 0),
+download_link varchar(1000) not null,
+post_id int not null, --默认所有资源都在帖子中被推荐过
+foreign key (post_id) references post(post_id)
+)
+
+create table instructor
+(
+instructor_id int identity(1,1) primary key,
+name varchar(20) not null,
+prof_title varchar(100),
+sex char(2) check(sex in ('男','女')),
+birthday varchar(10),
+telephone varchar(50),
+address varchar(100),
+email varchar(100),
+school_name varchar(20) not null,
+major_name varchar(20) not null,
+foreign key (school_name,major_name) references major(school_name,major_name)
+)
+
+create table include
+(
+order_id int,
+ISBN int,
+primary key(order_id, ISBN),
+foreign key (order_id) references Order(order_id),
+foreign key (ISBN) references book(ISBN)
+)
+
+create table area
+(
+area_id int identity(1,1) primary key,
+area_name varchar(50) not null
+)
+
+create table engage
+(
+area_id int,
+instructor_id int,
+primary key (area_id, instructor_id)
+)
